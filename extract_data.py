@@ -153,22 +153,19 @@ def get_county_climate(county: str, month: str):
     avg_pressure_list = avg_numbers_stripped[index + day + (day * 12)::3]
     avg_pressure_list = avg_pressure_list[:day]
 
-    avg_temp_list = list(map(float, avg_temp_list))
-    avg_dewpoint_list = list(map(float, avg_dewpoint_list))
-    avg_humidity_list = list(map(float, avg_humidity_list))
-    avg_windspeed_list = list(map(float, avg_windspeed_list))
-    avg_pressure_list = list(map(float, avg_pressure_list))
-
-    dir_path = dir_path + '/csv/' + county + '.csv'
-    if not os.path.exists(dir_path):
-        with open(dir_path, 'a') as f:
-            f.write("test")
+    avg_temp_list = list(map(float, avg_temp_list))[:-1]
+    avg_dewpoint_list = list(map(float, avg_dewpoint_list))[:-1]
+    avg_humidity_list = list(map(float, avg_humidity_list))[:-1]
+    avg_windspeed_list = list(map(float, avg_windspeed_list))[:-1]
+    avg_pressure_list = list(map(float, avg_pressure_list))[:-1]
 
     print("avg temps", avg_temp_list)
     print("avg dew points", avg_dewpoint_list)
     print("avg humidities", avg_humidity_list)
     print("avg windspeeds", avg_windspeed_list)
     print("avg pressures", avg_pressure_list)
+
+    return avg_temp_list, avg_dewpoint_list, avg_humidity_list, avg_windspeed_list, avg_pressure_list
 
 
 def get_county_data_30(county: str):
@@ -196,28 +193,43 @@ def get_county_data_30(county: str):
         cases_list.append(list[-2])
         deaths_list.append(list[-1])
 
-    # print(full_county_list)
+    dates_list = dates_list[-29:]
+    cases_list = cases_list[-29:]
+    deaths_list = deaths_list[-29:]
     cases_list = [int(x) for x in cases_list]
     deaths_list = [int(x) for x in deaths_list]
 
-    print("dates: ", dates_list)
-    print("cases: ", cases_list)
-    print("deaths:", deaths_list)
+    print(dates_list)
+    print(cases_list)
+    print(deaths_list)
 
+    return dates_list, cases_list, deaths_list
 
-get_county_data_30("Los Angeles")
-get_county_climate("Los Angeles", '5')
+def write_to_csv(county: str, month: str):
 
+    tuple_cases = get_county_data_30(county)
+    dates_list = tuple_cases[0]
+    cases_list = tuple_cases[1]
+    deaths_list = tuple_cases[2]
 
-# counties = ['California Total', 'Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo', 'Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Alpine', 'Modoc', 'Sierra', 'Trinity', 'Alameda - Berk', 'Yuba-Sutter']
-# for county in counties:
-#     print(county, get_county_data(county))
+    tuple_climate = get_county_climate(county, "5")
+    avg_temps_list = tuple_climate[0]
+    avg_dewpoints_list = tuple_climate[1]
+    avg_humidities_list = tuple_climate[2]
+    avg_windspeeds_list = tuple_climate[3]
+    avg_pressures_list = tuple_climate[4]
 
-# counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo', 'Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Alpine', 'Modoc', 'Sierra', 'Trinity', 'Alameda - Berk', 'Yuba-Sutter']
-# for county in counties:
-#     print(county)
-#     print(county, get_county_climate(county, '5'))
-#     print('\n')
-# https://stackoverflow.com/questions/36129963/use-beautifulsoup-to-obtain-view-element-code-instead-of-view-source-code
+    county = county.lower().replace(" ", "-")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    dir_path = dir_path + '/csv/' + county + '.csv'
+    with open(dir_path, 'w') as f:
+        f.write("Date, Cases, Deaths, Avg Temperatures, Avg Dewpoints, Avg Humidities, Avg Windspeeds, Avg Pressures,\n")
+        for i in range(len(dates_list)):
+            f.write(str(dates_list[i]) + ', ' + str(cases_list[i]) + ', ' + str(deaths_list[i]) + str(avg_temps_list[i]) + ', ' + str(avg_dewpoints_list[i]) + ', ' + str(avg_humidities_list[i]) + ', ' + str(avg_windspeeds_list[i]) + ', ' + str(avg_pressures_list[i]) + '\n')
 
-# </span><div class="mat-ripple mat-button-ripple" matripple=""></div><div class="mat-button-focus-overlay"></div></button><!-- --><mat-menu class=""><!-- --></mat-menu></menu-item-more></nav></lib-menu><!-- --><div _ngcontent-app-root-c137=""></div><lib-search _ngcontent-app-root-c137="" _nghost-app-root-c135=""
+counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo','Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Sierra', 'Trinity']
+for county in counties:
+    index = counties.index(county) + 1
+    print(county, str(index) + '/' + str(len(counties)))
+    write_to_csv(county, '5')
+    print('\n')
