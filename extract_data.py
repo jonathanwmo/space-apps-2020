@@ -2,6 +2,7 @@ import datetime
 from datetime import datetime, timedelta
 import os
 from urllib.request import Request, urlopen
+import urllib.request
 from bs4 import BeautifulSoup
 import re
 from selenium import webdriver
@@ -154,7 +155,36 @@ def get_county_climate(county: str, month: str):
     print("avg windspeeds", avg_windspeed_list)
     print("avg pressures", avg_pressure_list)
 
-get_county_climate("San Diego", '5')
+def get_county_data_30(county: str):
+    '''
+    gets covid-19 data of past 30 days from csv file https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv
+    :param county: county to input
+    :return: 2 lists of
+    '''
+
+    datafile = urllib.request.urlopen('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
+    # a list of lists
+    full_county_list = []
+    dates_list = []
+    cases_list = []
+    deaths_list = []
+    for line in datafile.readlines():
+        line = line.decode('utf-8').strip()
+        row = line.split(",")
+        if county.title() in str(row):
+            full_county_list.append(row)
+
+    for list in full_county_list:
+        dates_list.append(list[0])
+        cases_list.append(list[-2])
+        deaths_list.append(list[-1])
+
+    # print(full_county_list)
+    print(dates_list)
+    print(cases_list)
+    print(deaths_list)
+get_county_data_30("Los Angeles")
+get_county_climate("Los Angeles", '5')
 
 
 
@@ -162,11 +192,11 @@ get_county_climate("San Diego", '5')
 # for county in counties:
 #     print(county, get_county_data(county))
 
-counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo', 'Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Alpine', 'Modoc', 'Sierra', 'Trinity', 'Alameda - Berk', 'Yuba-Sutter']
-for county in counties:
-    print(county)
-    print(county, get_county_climate(county, '5'))
-    print('\n')
+# counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo', 'Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Alpine', 'Modoc', 'Sierra', 'Trinity', 'Alameda - Berk', 'Yuba-Sutter']
+# for county in counties:
+#     print(county)
+#     print(county, get_county_climate(county, '5'))
+#     print('\n')
 # https://stackoverflow.com/questions/36129963/use-beautifulsoup-to-obtain-view-element-code-instead-of-view-source-code
 
 # </span><div class="mat-ripple mat-button-ripple" matripple=""></div><div class="mat-button-focus-overlay"></div></button><!-- --><mat-menu class=""><!-- --></mat-menu></menu-item-more></nav></lib-menu><!-- --><div _ngcontent-app-root-c137=""></div><lib-search _ngcontent-app-root-c137="" _nghost-app-root-c135=""
