@@ -225,9 +225,13 @@ def write_to_csv(county: str, month: str):
     with open(dir_path, 'w') as f:
         f.write("Date, Cases, Deaths, Avg Temperatures, Avg Dewpoints, Avg Humidities, Avg Windspeeds, Avg Pressures,\n")
         for i in range(len(dates_list)):
-            f.write(str(dates_list[i]) + ', ' + str(cases_list[i]) + ', ' + str(deaths_list[i]) + str(avg_temps_list[i]) + ', ' + str(avg_dewpoints_list[i]) + ', ' + str(avg_humidities_list[i]) + ', ' + str(avg_windspeeds_list[i]) + ', ' + str(avg_pressures_list[i]) + '\n')
+            f.write(str(dates_list[i]) + ', ' + str(cases_list[i]) + ', ' + str(deaths_list[i]) +', ' + str(avg_temps_list[i]) + ', ' + str(avg_dewpoints_list[i]) + ', ' + str(avg_humidities_list[i]) + ', ' + str(avg_windspeeds_list[i]) + ', ' + str(avg_pressures_list[i]) + '\n')
 
-counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'San Luis Obispo', 'Yolo','Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Sierra', 'Trinity']
+# counties = ['Los Angeles', 'Riverside', 'San Diego',
+# counties = ['Orange', 'San Bernardi', 'Alameda', 'Santa Clara',
+# counties = ['San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced',
+# counties = ['San Luis Obispo', 'Yolo','Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras',
+counties = ['Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Sierra', 'Trinity']
 for county in counties:
     index = counties.index(county) + 1
     print(county, str(index) + '/' + str(len(counties)))
