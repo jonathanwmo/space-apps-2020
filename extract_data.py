@@ -105,7 +105,7 @@ def get_county_climate(county: str, month: str):
     '''
     gets avg temp, dew point, humidity, wind speed, pressure, precipitation
     :param county: string of county to be inputted
-    :return: a list of values
+    :return: 5 lists of values, one for temp, dewpoint, humidity, wind speed, pressure, and precipitation in a county
     '''
     county = county.lower().replace(" ", "-")
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -172,7 +172,7 @@ def get_county_data_30(county: str):
     '''
     gets covid-19 data of past 30 days from csv file https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv
     :param county: county to input
-    :return: 2 lists of
+    :return: 3 lists, one for date, cases, and deaths in a county
     '''
 
     datafile = urllib.request.urlopen(
@@ -206,6 +206,12 @@ def get_county_data_30(county: str):
     return dates_list, cases_list, deaths_list
 
 def write_to_csv(county: str, month: str):
+    '''
+    writes all the list data of above 2 functions to a csv file for all the counties
+    :param county: string of the county writing the csv for
+    :param month: string of the month desired
+    :return: void
+    '''
 
     tuple_cases = get_county_data_30(county)
     dates_list = tuple_cases[0]
@@ -227,11 +233,7 @@ def write_to_csv(county: str, month: str):
         for i in range(len(dates_list)):
             f.write(str(dates_list[i]) + ', ' + str(cases_list[i]) + ', ' + str(deaths_list[i]) +', ' + str(avg_temps_list[i]) + ', ' + str(avg_dewpoints_list[i]) + ', ' + str(avg_humidities_list[i]) + ', ' + str(avg_windspeeds_list[i]) + ', ' + str(avg_pressures_list[i]) + '\n')
 
-# counties = ['Los Angeles', 'Riverside', 'San Diego',
-# counties = ['Orange', 'San Bernardi', 'Alameda', 'Santa Clara',
-# counties = ['San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced',
-# counties = ['San Luis Obispo', 'Yolo','Santa Cruz', 'Placer', 'Napa', 'Humboldt', 'Madera', 'El Dorado', 'San Benito', 'Del Norte', 'Sutter', 'Nevada', 'Butte', 'Shasta', 'Mono', 'Mendocino', 'Yuba', 'Lake', 'Inyo', 'Mariposa', 'Calaveras',
-counties = ['Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Sierra', 'Trinity']
+counties = ['Los Angeles', 'Riverside', 'San Diego', 'Orange', 'San Bernardi', 'Alameda', 'Santa Clara', 'San Francisco', 'San Mateo', 'Kern', 'Tulare', 'Santa Barbara', 'Fresno', 'Imperial', 'Contra Costa', 'Sacramento', 'Ventura', 'San Joaquin', 'Kings', 'Stanislaus', 'Sonoma', 'Solano', 'Monterey', 'Marin', 'Merced', 'Glenn', 'Amador', 'Siskiyou', 'Colusa', 'Lassen', 'Tehama', 'Plumas', 'Tuolumne', 'Sierra', 'Trinity']
 for county in counties:
     index = counties.index(county) + 1
     print(county, str(index) + '/' + str(len(counties)))
