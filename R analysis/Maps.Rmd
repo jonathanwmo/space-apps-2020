@@ -1,0 +1,237 @@
+---
+title: "Maps Visual" 
+author: "Jason Jabbour"
+fontsize: 12pt
+geometry: margin=1in
+urlcolor: black
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, highlight=FALSE)
+library(tidyverse)
+library(ggplot2)
+library(usmap)
+library(readxl)
+library(viridis)
+```
+
+
+
+## Map
+### Population of Counties Per State
+```{R fig.height=5, fig.width=5}
+
+
+censusPopulation <- read_excel("C:/Users/jjaso/Desktop/space-apps-2020/censusPopulation.xlsx", 
+    skip = 3)
+censusPopulation = censusPopulation[2:59,]
+#select the county Name and the population
+censusPopulation = censusPopulation %>% select('...1','2019')
+
+
+#find the fips code for each county
+FipCodes <- read_excel("C:/Users/jjaso/Desktop/space-apps-2020/FipsCodes.xlsx")
+#Find the County Fip Codes for each State
+#return data with fips and population
+CountyFipCodes_forStates = function(theState){
+  fipsData = FipCodes %>% filter(FipCodes$State == theState) %>% select('Fip','County')
+  FinalData2 <<- cbind(censusPopulation,fipsData) %>% select('Fip','2019')
+    
+    
+  FinalData <<- FinalData2 %>% mutate(fips = FinalData2$Fip) %>% select('fips','2019')
+  
+}
+CountyFipCodes_forStates('CA')
+
+#plotting on the map
+plot_usmap(regions = "counties", include= c("CA"), data = FinalData, values = '2019', labels=F) +
+  scale_color_viridis(discrete = F, option = "A")+
+  scale_fill_viridis(discrete = F,option='D', trans = 'reverse') + labs(title = "Most Populous County in California",
+       subtitle = "Source: US Census 2010") +
+  theme(legend.position = "right")
+
+
+#+scale_fill_continuous(low = "gray", high = "blue", name = "Population (2019)", label = scales::comma)
+   
+```
+
+## Correlation Data
+### Cases and Deaths
+```{r}
+
+dates = c('2020-01-26', '2020-01-27', '2020-01-28', '2020-01-29', '2020-01-30', '2020-01-31', '2020-02-01', '2020-02-02', '2020-02-03', '2020-02-04', '2020-02-05', '2020-02-06', '2020-02-07', '2020-02-08', '2020-02-09', '2020-02-10', '2020-02-11', '2020-02-12', '2020-02-13', '2020-02-14', '2020-02-15', '2020-02-16', '2020-02-17', '2020-02-18', '2020-02-19', '2020-02-20', '2020-02-21', '2020-02-22', '2020-02-23', '2020-02-24', '2020-02-25', '2020-02-26', '2020-02-27', '2020-02-28', '2020-02-29', '2020-03-01', '2020-03-02', '2020-03-03', '2020-03-04', '2020-03-05', '2020-03-06', '2020-03-07', '2020-03-08', '2020-03-09', '2020-03-10', '2020-03-11', '2020-03-12', '2020-03-13', '2020-03-14', '2020-03-15', '2020-03-16', '2020-03-17', '2020-03-18', '2020-03-19', '2020-03-20', '2020-03-21', '2020-03-22', '2020-03-23', '2020-03-24', '2020-03-25', '2020-03-26', '2020-03-27', '2020-03-28', '2020-03-29', '2020-03-30', '2020-03-31', '2020-04-01', '2020-04-02', '2020-04-03', '2020-04-04', '2020-04-05', '2020-04-06', '2020-04-07', '2020-04-08', '2020-04-09', '2020-04-10', '2020-04-11', '2020-04-12', '2020-04-13', '2020-04-14', '2020-04-15', '2020-04-16', '2020-04-17', '2020-04-18', '2020-04-19', '2020-04-20', '2020-04-21', '2020-04-22', '2020-04-23', '2020-04-24', '2020-04-25', '2020-04-26', '2020-04-27', '2020-04-28', '2020-04-29', '2020-04-30', '2020-05-01', '2020-05-02', '2020-05-03', '2020-05-04', '2020-05-05', '2020-05-06', '2020-05-07', '2020-05-08', '2020-05-09', '2020-05-10', '2020-05-11', '2020-05-12', '2020-05-13', '2020-05-14', '2020-05-15', '2020-05-16', '2020-05-17', '2020-05-18', '2020-05-19', '2020-05-20', '2020-05-21', '2020-05-22', '2020-05-23', '2020-05-24', '2020-05-25', '2020-05-26', '2020-05-27', '2020-05-28', '2020-05-29')
+
+cases = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 11, 13, 14, 14, 19, 20, 28, 32, 40, 53, 69, 94, 144, 190, 231, 292, 351, 421, 536, 662, 799, 1216, 1465, 1804, 2136, 2474, 3011, 3518, 4045, 4566, 5277, 5940, 6360, 6910, 7530, 7955, 8430, 8873, 9192, 9420, 10047, 10496, 10854, 11391, 12021, 12341, 13816, 15140, 16435, 17508, 18545, 19107, 19528, 20417, 20976, 22485, 23182, 24215, 24894, 25662, 26217, 27815, 28644, 29427, 30296, 31197, 31677, 32258, 33180, 34428, 35329, 36259, 37303, 37974, 38451, 39573, 40857, 42037, 43052, 44055, 44988, 46018, 47822, 48700, 49774, 51562)
+
+deaths =c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 7, 11, 13, 21, 27, 33, 37, 44, 54, 65, 78, 89, 117, 132, 147, 169, 198, 223, 241, 265, 296, 320, 360, 402, 455, 495, 576, 600, 617, 663, 729, 797, 850, 895, 913, 942, 1000, 1056, 1111, 1172, 1209, 1229, 1256, 1313, 1367, 1418, 1468, 1512, 1530, 1569, 1613, 1659, 1659, 1755, 1793, 1821, 1839, 1913, 1970, 2016, 2049, 2090, 2104, 2116, 2143, 2195, 2241, 2290)
+
+daily_cases_deaths = data.frame(dates, cases,deaths)
+daily_cases_deaths =daily_cases_deaths %>% mutate(dates = as.Date(daily_cases_deaths$dates))
+daily_cases_deaths
+daily_cases_deaths %>% ggplot(aes(x=dates, y= cases), alpha = .7)+
+  geom_point(color = 'blue')+
+  geom_line(size=1, alpha = .5, color = 'blue')+
+  geom_point(aes(y=deaths), color = 'red')+
+  geom_line(color = 'black')+
+  theme(axis.text.x = element_text(angle = 90,vjust =.2),
+         panel.grid.minor.x = element_blank())+
+  scale_x_date(date_breaks = "3 day", date_labels = "%b %d")+
+  labs(title = "Number of Cases and Deaths in Los Angeles",
+       y = "People",
+       x = "Date")
+
+
+
+
+```
+
+###Current Month Only
+```{r}
+
+dates = c('2020-01-26', '2020-01-27', '2020-01-28', '2020-01-29', '2020-01-30', '2020-01-31', '2020-02-01', '2020-02-02', '2020-02-03', '2020-02-04', '2020-02-05', '2020-02-06', '2020-02-07', '2020-02-08', '2020-02-09', '2020-02-10', '2020-02-11', '2020-02-12', '2020-02-13', '2020-02-14', '2020-02-15', '2020-02-16', '2020-02-17', '2020-02-18', '2020-02-19', '2020-02-20', '2020-02-21', '2020-02-22', '2020-02-23', '2020-02-24', '2020-02-25', '2020-02-26', '2020-02-27', '2020-02-28', '2020-02-29', '2020-03-01', '2020-03-02', '2020-03-03', '2020-03-04', '2020-03-05', '2020-03-06', '2020-03-07', '2020-03-08', '2020-03-09', '2020-03-10', '2020-03-11', '2020-03-12', '2020-03-13', '2020-03-14', '2020-03-15', '2020-03-16', '2020-03-17', '2020-03-18', '2020-03-19', '2020-03-20', '2020-03-21', '2020-03-22', '2020-03-23', '2020-03-24', '2020-03-25', '2020-03-26', '2020-03-27', '2020-03-28', '2020-03-29', '2020-03-30', '2020-03-31', '2020-04-01', '2020-04-02', '2020-04-03', '2020-04-04', '2020-04-05', '2020-04-06', '2020-04-07', '2020-04-08', '2020-04-09', '2020-04-10', '2020-04-11', '2020-04-12', '2020-04-13', '2020-04-14', '2020-04-15', '2020-04-16', '2020-04-17', '2020-04-18', '2020-04-19', '2020-04-20', '2020-04-21', '2020-04-22', '2020-04-23', '2020-04-24', '2020-04-25', '2020-04-26', '2020-04-27', '2020-04-28', '2020-04-29', '2020-04-30', '2020-05-01', '2020-05-02', '2020-05-03', '2020-05-04', '2020-05-05', '2020-05-06', '2020-05-07', '2020-05-08', '2020-05-09', '2020-05-10', '2020-05-11', '2020-05-12', '2020-05-13', '2020-05-14', '2020-05-15', '2020-05-16', '2020-05-17', '2020-05-18', '2020-05-19', '2020-05-20', '2020-05-21', '2020-05-22', '2020-05-23', '2020-05-24', '2020-05-25', '2020-05-26', '2020-05-27', '2020-05-28', '2020-05-29')
+
+cases = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 11, 13, 14, 14, 19, 20, 28, 32, 40, 53, 69, 94, 144, 190, 231, 292, 351, 421, 536, 662, 799, 1216, 1465, 1804, 2136, 2474, 3011, 3518, 4045, 4566, 5277, 5940, 6360, 6910, 7530, 7955, 8430, 8873, 9192, 9420, 10047, 10496, 10854, 11391, 12021, 12341, 13816, 15140, 16435, 17508, 18545, 19107, 19528, 20417, 20976, 22485, 23182, 24215, 24894, 25662, 26217, 27815, 28644, 29427, 30296, 31197, 31677, 32258, 33180, 34428, 35329, 36259, 37303, 37974, 38451, 39573, 40857, 42037, 43052, 44055, 44988, 46018, 47822, 48700, 49774, 51562)
+
+deaths =c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 7, 11, 13, 21, 27, 33, 37, 44, 54, 65, 78, 89, 117, 132, 147, 169, 198, 223, 241, 265, 296, 320, 360, 402, 455, 495, 576, 600, 617, 663, 729, 797, 850, 895, 913, 942, 1000, 1056, 1111, 1172, 1209, 1229, 1256, 1313, 1367, 1418, 1468, 1512, 1530, 1569, 1613, 1659, 1659, 1755, 1793, 1821, 1839, 1913, 1970, 2016, 2049, 2090, 2104, 2116, 2143, 2195, 2241, 2290)
+
+#enter the date you want to start seeing the cases and deaths from
+sort_date = function(the_date){
+  daily_cases_deaths = data.frame(dates, cases,deaths)
+  daily_cases_deaths =daily_cases_deaths %>% mutate(dates = as.Date(daily_cases_deaths$dates))
+  
+  daily_cases_deaths = daily_cases_deaths %>%  filter(dates >= as.Date(as.character(the_date)))
+  daily_cases_deaths %>% ggplot(aes(x=dates, y= cases), alpha = .7)+
+    geom_point(color = 'blue')+
+    geom_line(size=1, alpha = .5, color = 'blue')+
+    geom_point(aes(y=deaths), color = 'red')+
+    geom_line(color = 'black')+
+    theme(axis.text.x = element_text(angle = 90,vjust =.2),
+           panel.grid.minor.x = element_blank())+
+    scale_x_date(date_breaks = "3 day", date_labels = "%b %d")+
+    labs(title = "Number of Cases and Deaths in Los Angeles",
+         y = "People",
+         x = "Date")
+}
+sort_date("2020-01-01")
+
+#enter the date for only the cases
+sort_date = function(the_date){
+  daily_cases_deaths = data.frame(dates, cases,deaths)
+  daily_cases_deaths =daily_cases_deaths %>% mutate(dates = as.Date(daily_cases_deaths$dates))
+  
+  daily_cases_deaths = daily_cases_deaths %>%  filter(dates >= as.Date(as.character(the_date)))
+  daily_cases_deaths %>% ggplot(aes(x=dates, y= cases), alpha = .7)+
+    geom_point(color = 'blue')+
+    geom_line(size=1, alpha = .5, color = 'blue')+
+    theme(axis.text.x = element_text(angle = 90,vjust =.2),
+           panel.grid.minor.x = element_blank())+
+    scale_x_date(date_breaks = "1 day", date_labels = "%b %d")+
+    labs(title = "Number of Cases in Los Angeles",
+         y = "People",
+         x = "Date")
+}
+sort_date("2020-05-01")
+
+#enter the date for only the deaths
+sort_date = function(the_date){
+  daily_cases_deaths = data.frame(dates, cases,deaths)
+  daily_cases_deaths =daily_cases_deaths %>% mutate(dates = as.Date(daily_cases_deaths$dates))
+  
+  daily_cases_deaths = daily_cases_deaths %>%  filter(dates >= as.Date(as.character(the_date)))
+  daily_cases_deaths %>% ggplot(aes(x=dates, y= deaths), alpha = .7)+
+    geom_point(color = 'red')+
+    geom_line(size=1, alpha = .5, color = 'red')+
+    theme(axis.text.x = element_text(angle = 90,vjust =.2),
+           panel.grid.minor.x = element_blank())+
+    scale_x_date(date_breaks = "1 day", date_labels = "%b %d")+
+    labs(title = "Number of Deaths in Los Angeles",
+         y = "People",
+         x = "Date")
+}
+sort_date("2020-05-01")
+
+
+```
+
+##Environmental Factors
+###Per County
+```{r}
+month_dates = c('2020-05-01', '2020-05-02', '2020-05-03', '2020-05-04', '2020-05-05', '2020-05-06', '2020-05-07', '2020-05-08', '2020-05-09', '2020-05-10', '2020-05-11', '2020-05-12', '2020-05-13', '2020-05-14', '2020-05-15', '2020-05-16', '2020-05-17', '2020-05-18', '2020-05-19', '2020-05-20', '2020-05-21', '2020-05-22', '2020-05-23', '2020-05-24', '2020-05-25', '2020-05-26', '2020-05-27', '2020-05-28', '2020-05-29', '2020-05-30')
+
+#change to dates
+month_dates = as.Date(month_dates)
+
+avg_temps = c(67.5, 66.6, 66.9, 71.1, 79.0, 80.1, 79.2, 73.7, 67.6, 63.9, 64.9, 62.7, 63.5, 67.4, 68.3, 70.3, 68.4, 63.1, 62.1, 64.0, 71.5, 65.7, 65.1, 68.2, 72.7, 74.1, 71.6, 67.3, 64.5, 62.5)
+
+avg_dewpoints = c(53.3, 52.3, 51.7, 52.0, 40.0, 41.7, 43.3, 52.0, 57.0, 55.6, 52.1, 49.4, 46.0, 48.6, 52.3, 51.1, 52.8, 54.7, 44.7, 47.3, 42.9, 52.6, 50.5, 53.4, 54.5, 54.7, 56.0, 56.4, 56.0, 52.6)
+
+avg_humidities = c(63.1, 62.4, 58.8, 53.2, 28.9, 27.0, 29.1, 48.3, 70.5, 75.6, 64.3, 62.3, 54.1, 53.5, 58.2, 52.0, 58.3, 75.4, 54.9, 56.7, 41.1, 64.3, 60.1, 60.7, 55.5, 53.8, 60.0, 69.9, 74.4, 70.4)
+
+avg_windspeeds= c(8.8, 6.6, 6.1, 5.5, 4.1, 3.3, 4.7, 5.2, 6.1, 6.3, 5.7, 6.5, 6.3, 7.0, 7.8, 5.9, 6.7, 8.8, 5.6, 6.3, 4.5, 8.1, 7.2, 4.8, 5.1, 5.5, 6.3, 6.8, 6.5, 2.6)
+
+avg_pressures = c(29.1, 29.1, 29.2, 29.1, 29.1, 29.1, 29.0, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.0, 29.1, 29.1, 29.1, 29.2, 29.1, 29.0, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1, 29.1)
+
+#create a dataframe
+enviro_frame = data.frame(month_dates,avg_temps, avg_dewpoints, avg_humidities, avg_windspeeds, avg_pressures)
+
+en_factors = function(the_factor,the_title, y_axes){
+  enviro_frame %>% ggplot(aes(x = month_dates, y = the_factor)) +
+    geom_point(color = '#53A2BE')+ geom_line()+ labs(title = the_title,
+       y = y_axes,
+       x = "Date")+
+    scale_x_date(date_breaks = "1 day", date_labels = "%b %d")+
+    theme(axis.text.x = element_text(angle = 90,vjust =.2),
+         panel.grid.minor.x = element_blank())
+}
+
+#Temperature
+en_factors(avg_temps,'Temperature in Los Angeles','Temperature (F)')
+
+#Dewpoint
+en_factors(avg_dewpoints,'Dew points in Los Angeles','Dew point')
+
+#Humid
+en_factors(avg_humidities,'Humidities in Los Angeles','Humidity')
+
+#WindSpeed
+en_factors(avg_windspeeds,'Windspeed in Los Angeles','Windspeed (mph)')
+
+#pressure
+en_factors(avg_pressures,'Pressure in Los Angeles','Pressure')
+
+
+```
+
+##Probability Analyzer
+```{r}
+library(PSF)
+
+new_cases = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 4, 2, 1, 0, 5, 1, 8, 4, 8, 13, 16, 25, 50, 46, 41, 61, 59, 70, 115, 126, 137, 417, 249, 339, 332, 338, 537, 507, 527, 521, 711, 663, 420, 550, 620, 425, 475, 443, 319, 228, 627, 449, 358, 537, 630, 320, 1475, 1324, 1295, 1073, 1037, 562, 421, 889, 559, 1509, 697, 1033, 679, 768, 555, 1598, 829, 783, 869, 901, 480, 581, 922, 1248, 901, 930, 1044, 671, 477, 1122, 1284, 1180, 1015, 1003, 933, 1030, 1804, 878, 1074, 1788)
+
+cases_model <- psf(new_cases)
+(cases_preds <- predict(cases_model, n.ahead = 24))
+
+mu0 = sum(cases_preds)/24
+ro0= 4
+
+la_population = 10039107 - sum(new_cases)*4
+
+
+mu0/la_population
+
+#.00009
+#.009%
+plot(cases_model,cases_preds)
+
+sum(new_cases)/4000000
+
+
+
+
+```
+
+## References
+1. US Census Bureau <https://www.census.gov/data/datasets/time-series/demo/popest/2010s-counties-total.html>
+2. Fips Codes <https://www.nrcs.usda.gov/wps/portal/nrcs/detail/ca/home/?cid=nrcs143_013697>
