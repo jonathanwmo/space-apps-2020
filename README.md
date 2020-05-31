@@ -13,5 +13,15 @@ To run extract_data.py:
                        $ xattr -d com.apple.quarantine chromedriver
                        
                        
+                       
+To Run Maps.Rmd install the following packages:
+	- tidyverse
+	- ggplot2
+	- usmap
+	- readxl
+	- viridis
+	- PSF
+Once all libraries have been installed, use R Studio to run the entire program by clicking on the run button at the top right corner of the screen.                       
+                       
               
  
