@@ -1,6 +1,7 @@
 # space-apps-2020
 For NASA Space Apps Challenge 2020
-Wahoo Hackers: Jonathan Mo, Jason Jabbour, Cristian Chicas, and Hien (Taylor) Truong \n
+Wahoo Hackers: Jonathan Mo, Jason Jabbour, Cristian Chicas, and Hien (Taylor) Truong
+
 Video Demo: https://youtu.be/Xf_td0NW-S8
 
 Data extraction code in extract_data.py
